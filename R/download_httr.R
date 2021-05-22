@@ -16,7 +16,7 @@
 #' @export
 download_httr <- function(DOIs, srcFUN = NULL, outdir = '.', ...){
   # if (!dir.exists(outdir)) dir.create(outdir)
-  DOIs <- Init_Check(DOIs,outdir = outdir)
+  DOIs <- check_doi(DOIs,outdir = outdir)
   # Convert DOIs to pdf download urls using srcFUN. If srcFUN is NULL, then set urls
   #   equal to DOIs
   if (is.null(srcFUN)) srcFUN <- src_URL

@@ -34,7 +34,7 @@ src_URL <- function(url) url
 #' @rdname srcFUN
 #' @export
 src_wiley_I <- function(DOIs, outdir = "./", .download = TRUE, ...){
-  DOIs %<>% Init_Check(outdir)
+  DOIs %<>% check_doi(outdir)
   
   urls <- paste0("http://onlinelibrary.wiley.com/doi/", DOIs, "/pdf")
   # for every single url; modified to support batch download model
@@ -54,6 +54,7 @@ src_wiley_I <- function(DOIs, outdir = "./", .download = TRUE, ...){
   sapply(urls, FUN, USE.NAMES = FALSE)#return srcs
 }
 
+## 1. redirect by DOI: "//meta[@http-equiv='REFRESH']"
 # get refreshed URL from https://doi.org/
 getRefreshUrl_DOI <- function(p){
     url <- tryCatch({
@@ -61,81 +62,6 @@ getRefreshUrl_DOI <- function(p){
         str_extract("(?<=Redirect=).*(?='$)") %>% URLdecode()
     }, error = function(e){NA})
     return(url)
-}
-
-# get refreshed download URL from SciDirect
-getRefreshUrl_SD <- function(p){
-    url <- tryCatch({
-        xml_find_first(p, '//div[@id="redirect-message"]/p/a') %>% xml_attr("href")
-    }, error = function(e){NA})
-    return(url)
-}
-
-.SciDirect <- function(url, type = c("url", "doi"), .download = TRUE, outdir, ...){
-  tryCatch({
-    if (type[1] == "doi"){
-        p <- POST("https://doi.org/", encode = "form",
-                  body = list(hdl = url)) %>% content(encoding = "UTF-8") 
-        
-        ## 1. redirect by DOI: "//meta[@http-equiv='REFRESH']"
-        url <- getRefreshUrl_DOI(p)
-        if (!is.na(url)){
-            p <- GET(url) %>% content(encoding = "UTF-8")
-        }
-    }else if (type[1] == "url"){
-        p <- GET(url) %>% content(encoding = "UTF-8")
-    }
-    
-    json <- xml_find_first(p, "//script[@type='application/json']") %>% xml_text
-    
-    if (is.na(json)){
-        src <- xml_find_first(p, "//a[@id='pdfLink']") %>% xml_attr("href")
-        # or "//div[@class='PdfDropDownMenu']"
-    }else{
-        src <- fromJSON(json)$article$pdfDownload$linkToPdf %>% 
-            paste0("http://www.sciencedirect.com", .)
-    }
-    
-    ## 2. redirect by ScienceDirect
-    p       <- GET(src) %>% content(encoding = "UTF-8")
-    src_new <- getRefreshUrl_SD(p)
-
-    if (!is.na(src_new)) { src <- src_new }
-    # file <- paste0(outdir, doi, ".pdf")
-    if (.download) write_webfile(src, outdir, ...)
-    src#return trycatch
-  }, error = function(e) {
-    message(e)
-    return("")
-  })
-}
-
-#' @rdname srcFUN
-#' @export
-src_SciDirect.doi <- function(DOIs, outdir = "./", .download = TRUE, ...){
-  DOIs %<>% Init_Check(outdir)
-
-  srcs <- character()
-  for (i in seq_along(DOIs)){
-    cat(sprintf("[%d]: downloading %s\n", i, DOIs[i]))
-    srcs[i] <- .SciDirect(DOIs[i], type = "doi", .download, outdir, ...)
-  }
-  # sapply(DOIs, FUN, USE.NAMES = FALSE)#return srcs
-  return(srcs)
-}
-
-
-#' @rdname srcFUN
-#' @export
-src_SciDirect.url <- function(urls, outdir = "./", .download = TRUE, ...){
-  urls %<>% Init_Check(outdir)
-  srcs <- character()
-  for (i in seq_along(urls)){
-    cat(sprintf("[%d]: downloading %s\n", i, urls[i]))
-    srcs[i] <- .SciDirect(urls[i], type = "url", .download, outdir, ...)
-  }
-  # sapply(DOIs, FUN, USE.NAMES = FALSE)#return srcs
-  return(srcs)
 }
 
 #' @rdname srcFUN

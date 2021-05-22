@@ -8,7 +8,7 @@ Description: Download papers batchly using DOIs from many database. And some pra
 License: GPL-3
 LazyData: TRUE
 import: 
-    RoxygenNote: 6.1.0
+    RoxygenNote
 Suggests: 
     testthat (>= 2.1.0),
     knitr,
@@ -26,5 +26,6 @@ Imports:
     methods,
     plyr
 VignetteBuilder: knitr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
+Encoding: UTF-8

@@ -18,10 +18,9 @@ write_webfile <- function(src, outdir = "./", file = NULL, ...){
   if (is.null(file)) {
     # strs <- strsplit(src, "\\?")[[1]]
     # file <- str_extract(basename(strs[1]), ".*pdf$") %>% paste0(outdir, .)
-
     # match '-', 'alphabet and number', '\\.'
     file <- str_extract(src, "[-\\w\\.]*\\.pdf")[[1]][1] %>% paste0(outdir, .)
-  }else{
+  } else {
     #make sure outdir is correct, the last character of outdir, should be '/'
     file <- paste0(outdir, basename(file)) 
   }
@@ -40,50 +39,8 @@ write_webfile <- function(src, outdir = "./", file = NULL, ...){
   }
 }
 
-#' write_urls
-#' 
-#' write character vectors of urls into text file, in order to the use of 
-#' subsequent aria2 download
-#' 
-#' @param urls pdf downloading urls.
-#' @param file urls are written into file.
-#' 
-#' @importFrom utils URLdecode write.table
-#' @export
-write_urls <- function(urls, file){
-  # data.table::fwrite(data.frame(urls), file, col.names = F)
-  write.table(data.frame(urls), file, col.names = F, row.names = F, quote=F)
-}
-
-#' get DOIs from endnote export xml files
-#' 
-#' @param xmlfile Endnote exported xml file path, DOI information must be included.
-#' @export
-getDOIs_endnote <- function(xmlfile) {
-    doc    <- read_xml(xmlfile)
-    titles <- xml_find_all(doc, "//title") %>% xml_text()
-    dois   <- xml_find_all(doc, "//electronic-resource-num") %>% xml_text() %>% 
-        gsub("\r\n| ", "", .)
-
-    data.frame(title = titles, DOI = dois, stringsAsFactors = F)#quickly return
-}
-
-#' check outdir and doi
-#' 
-#' Check whether outdir exist, if not then will create it. If doi was URLencoded, 
-#' then decode it.
-#' 
-#' @inheritParams src_wiley_I
-#' 
-#' @return URLdecode doi 
-#' @export
-Init_Check <- function(doi, outdir){
-  if (!dir.exists(outdir)) dir.create(outdir)
-  sapply(doi, URLdecode, USE.NAMES = F)
-}
-
 # download_AMS_I <- function(doi, outdir, ...){
-#   doi %<>% Init_Check(outdir)
+#   doi %<>% check_doi(outdir)
 #   url <- paste0("http://journals.ametsoc.org/doi/pdf/", doi)
   
 #   file_pdf <- paste0(outdir, doi, ".pdf") 
@@ -92,7 +49,7 @@ Init_Check <- function(doi, outdir){
 
 # downlaod paper from springer
 # download_Springer_I <- function(doi, outdir, ...){
-#   doi %<>% Init_Check(outdir)
+#   doi %<>% check_doi(outdir)
 #   src <- paste0("https://link.springer.com/content/pdf/", doi, ".pdf")
 
 #   file_pdf <- paste0(outdir, doi, ".pdf") 

@@ -4,8 +4,7 @@
 \alias{download_aria2}
 \title{download using aria2}
 \usage{
-download_aria2(DOIs, srcFUN = NULL, outdir = ".", n = 8,
-  Rshell = FALSE, ...)
+download_aria2(DOIs, srcFUN = NULL, outdir = ".", n = 8, Rshell = FALSE, ...)
 }
 \arguments{
 \item{DOIs}{Character vectors, multiple \code{doi}.}
