@@ -4,10 +4,12 @@
 #' @export
 src_URL <- function(url) url
 
-#' srcFUN function
+#' @title srcFUN
+#' @name srcFUN
 #' 
+#' @description
 #' *  `src_URL` simplest srcFUN, just treat the input url as download link.
-#' *  `src_wiley_I` wiley library. Journal like GRL, JGR, WRR, HP, 
+#' *  `src_wiley` wiley library. Journal like GRL, JGR, WRR, HP, 
 #'  all in the database. Compared with other srcFUNs, this one is quite 
 #'  complicated. It relies on previous web page identidy authentication. Hence, 
 #'  it can't download simply by pdf urls, likes other database.   
@@ -31,38 +33,7 @@ src_URL <- function(url) url
 #' @param .download If true, it will will download pdf directly, and return 
 #' pdf src. If false, only pdf src returned, without downlaoding pdf.
 #' @param ... other parameters pass to [httr::GET()]
-#' @rdname srcFUN
-#' @export
-src_wiley_I <- function(DOIs, outdir = "./", .download = TRUE, ...){
-  DOIs %<>% check_doi(outdir)
-  
-  urls <- paste0("http://onlinelibrary.wiley.com/doi/", DOIs, "/pdf")
-  # for every single url; modified to support batch download model
-  FUN <- function(url){
-    tryCatch({
-      p <- GET(url, add_headers(`User-Agent` = header)) %>% content()
-      src <- xml_find_all(p, "//iframe[@id='pdfDocument']") %>% xml_attr("src")
-      # file_pdf <- str_extract(src, ".*pdf") %>% basename %>% paste0(outdir, .)
-      if (.download) write_webfile(src, outdir, ...)
-      return(src)
-    }, error = function(e) {
-      message(e)
-      return("")
-    })
-  }
-  
-  sapply(urls, FUN, USE.NAMES = FALSE)#return srcs
-}
-
-## 1. redirect by DOI: "//meta[@http-equiv='REFRESH']"
-# get refreshed URL from https://doi.org/
-getRefreshUrl_DOI <- function(p){
-    url <- tryCatch({
-    xml_find_first(p, "//meta[@http-equiv='REFRESH']") %>% xml_attr("content") %>% 
-        str_extract("(?<=Redirect=).*(?='$)") %>% URLdecode()
-    }, error = function(e){NA})
-    return(url)
-}
+NULL
 
 #' @rdname srcFUN
 #' @export

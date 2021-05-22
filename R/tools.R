@@ -3,8 +3,8 @@
 #' Check whether outdir exist, if not then will create it. If doi was URLencoded,
 #' then decode it.
 #'
-#' @inheritParams src_wiley_I
-#'
+#' @inheritParams srcFUN
+#' 
 #' @return URLdecode doi
 #' @export
 check_doi <- function(doi, outdir) {
@@ -14,6 +14,22 @@ check_doi <- function(doi, outdir) {
 
 is_httr <- function(x) {
     substr(x, 1, 4) == "http"
+}
+
+#' guess_filename
+#' @examples
+#' guess_filename("https://agupubs.onlinelibrary.wiley.com/doi/pdfdirect/10.1002/2016WR020175?download=true")
+#' 
+#' @export
+guess_filename <- function(x) {
+    file = str_extract(x, "[-\\w\\.]*\\.pdf")[[1]][1]
+    if (is.na(file)) {
+        # for wiley
+        file = parse_url(x)$path %>%
+            gsub("doi/|pdfdirect/", "", .) %>%
+            gsub("/", "-", .) %>% paste0(".pdf")
+    }
+    file
 }
 
 #' write_urls
@@ -43,4 +59,17 @@ getDOIs_endnote <- function(xmlfile) {
         gsub("\r\n| ", "", .)
 
     data.frame(title = titles, DOI = dois, stringsAsFactors = F) # quickly return
+}
+
+listk <- function (...) 
+{
+    cols <- as.list(substitute(list(...)))[-1]
+    vars <- names(cols)
+    Id_noname <- if (is.null(vars)) 
+        seq_along(cols)
+    else which(vars == "")
+    if (length(Id_noname) > 0) 
+        vars[Id_noname] <- sapply(cols[Id_noname], deparse)
+    x <- setNames(list(...), vars)
+    return(x)
 }

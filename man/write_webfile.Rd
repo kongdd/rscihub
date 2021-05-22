@@ -4,14 +4,14 @@
 \alias{write_webfile}
 \title{write_webfile}
 \usage{
-write_webfile(src, outdir = "./", file = NULL, ...)
+write_webfile(src, file = NULL, outdir = "./", overwrite = FALSE, ...)
 }
 \arguments{
 \item{src}{download link}
 
-\item{outdir}{output directory}
-
 \item{file}{file name}
+
+\item{outdir}{output directory}
 
 \item{...}{other parameters to \code{\link[httr:GET]{httr::GET()}}}
 }

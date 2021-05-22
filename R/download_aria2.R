@@ -4,7 +4,7 @@
 #' to generate pdf download links. You can also construct src function personally 
 #' to support more.
 #' 
-#' @inheritParams src_wiley_I
+#' @inheritParams srcFUN
 #' @param outdir outdir name, string used to make new directory to save papers
 #' @param srcFUN function used to generate pdf download links according to DOIs. 
 #' If srcFUN is null, then this function will treat input parameter DOIs as download urls.

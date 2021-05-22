@@ -16,6 +16,7 @@ Suggests:
 Imports:
     httr,
     xml2,
+    glue,
     jsonlite,
     magrittr,
     stringr,
