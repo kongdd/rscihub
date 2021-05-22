@@ -8,15 +8,7 @@ getRefreshUrl_scidirect <- function(p) {
     })
 }
 
-#' @import glue
-#' @export
-src_wiley <- function(x, outfile = NULL, outdir = "./", ...) {
-    x %<>% check_doi(outdir)
-    url <- sprintf("https://agupubs.onlinelibrary.wiley.com/doi/pdfdirect/%s?download=true", x)
-    write_webfile(url, outfile, outdir, ...)
-}
-
-src_scidirect <- function(x, outfile = NULL, outdir = ".", ...) {
+url_scidirect <- function(x) {
     if (is.character(x)) {
         if (is_httr(x)) {
             p <- GET(x) %>% content(encoding = "UTF-8") # if url
@@ -35,13 +27,14 @@ src_scidirect <- function(x, outfile = NULL, outdir = ".", ...) {
         }
         root <- "https://www.sciencedirect.com/science/article/pii"
         src <- with(param, glue::glue("{root}/{pii}{pdfExtension}?md5={md5}&pid={pid}"))
-        if (is.null(outfile)) outfile = param$pid
+        # if (is.null(outfile)) outfile = param$pid
     }
 
     ## 2. redirect by ScienceDirect
     p <- GET(src)
-    src_new <- getRefreshUrl_scidirect(p)
-    write_webfile(src_new, outfile, outdir, ...)
+    src <- getRefreshUrl_scidirect(p)
+    src
+    # write_webfile(src, outfile, outdir, ...)
 }
 
 # #' @rdname srcFUN

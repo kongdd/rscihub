@@ -3,24 +3,24 @@
 \name{src_URL}
 \alias{src_URL}
 \alias{srcFUN}
-\alias{src_AMS}
-\alias{src_Springer}
-\alias{src_SciReps}
-\alias{src_IOP}
-\alias{src_hess}
+\alias{url_AMS}
+\alias{url_IOP}
+\alias{url_hess}
+\alias{url_springer}
+\alias{url_nature}
 \title{srcFUN}
 \usage{
 src_URL(url)
 
-src_AMS(doi)
+url_AMS(doi)
 
-src_Springer(doi)
+url_IOP(doi)
 
-src_SciReps(doi)
+url_hess(doi)
 
-src_IOP(doi)
+url_springer(doi)
 
-src_hess(doi)
+url_nature(doi)
 }
 \arguments{
 \item{url}{pdf url}

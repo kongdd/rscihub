@@ -9,19 +9,41 @@
 #' pdf src. If false, only pdf src returned, without downlaoding pdf.
 #' @param ... other parameters pass to [httr::GET()]
 #' 
+#' @details supported:
+#' - www.sciencedirect.com
+#' - agupubs.onlinelibrary.wiley.com
+#' - link.springer.com
+#' - nature.com
+#' - iopscience.iop.org
+#' - journals.ametsoc.org
+#' - www.hydrol-earth-syst-sci.net
+#' 
 #' @example R/examples/ex-scihub.R
 #' @export
-scihub <- function(doi, outdir = ".", overwrite = FALSE, ...) {
+scihub <- function(doi, outdir = ".", overwrite = TRUE, ...) {
     param <- parse_doi(doi)
     server <- param$server
 
     if (server == "www.sciencedirect.com") {
-        src_scidirect(param$content, param$outfile, outdir, overwrite = overwrite, ...)
+        url <- url_scidirect(param$content)
     } else if (server == "agupubs.onlinelibrary.wiley.com") {
-        src_wiley(doi, param$outfile, outdir, overwrite = overwrite, ...)
+        url <- url_wiley(doi)
+    } else if (server == "www.mdpi.com") {
+        url <- paste0(param$url, "/pdf")
+    } else if (server == "link.springer.com") {
+        url <- url_springer(doi)
+    } else if (server == "www.nature.com") {
+        url <- url_nature(doi)
+    } else if (server == "iopscience.iop.org") {
+        url <- url_IOP(doi)
+    } else if (server == "journals.ametsoc.org") {
+        url <- url_AMS(doi)
+    } else if (server == "www.hydrol-earth-syst-sci.net") {
+        url <- url_hess(doi)
     } else {
-        message("not support")
+        stop(sprintf("not support: %s", server))
     }
+    write_webfile(url, param$outfile, outdir, overwrite = overwrite, ...)
 }
 
 ## 1. redirect by DOI: "//meta[@http-equiv='REFRESH']"

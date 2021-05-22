@@ -4,7 +4,7 @@
 \alias{scihub}
 \title{download pdf by doi}
 \usage{
-scihub(doi, outdir = ".", overwrite = FALSE, ...)
+scihub(doi, outdir = ".", overwrite = TRUE, ...)
 }
 \arguments{
 \item{doi}{Character, Digital Object Identifier, like
@@ -22,10 +22,26 @@ pdf src. If false, only pdf src returned, without downlaoding pdf.}
 \description{
 download pdf by doi
 }
+\details{
+supported:
+\itemize{
+\item www.sciencedirect.com
+\item agupubs.onlinelibrary.wiley.com
+\item link.springer.com
+\item nature.com
+\item iopscience.iop.org
+\item journals.ametsoc.org
+\item www.hydrol-earth-syst-sci.net
+}
+}
 \examples{
 \dontrun{
-html_doi("10.1016/j.scitotenv.2021.145381", overwrite=T)
-html_doi("10.1002/2016WR020175", overwrite=T)
-src_wiley("10.1002/2016WR020175", overwrite=T)
+src_wiley("10.1002/2016WR020175", overwrite = T)
+scihub("10.1016/j.scitotenv.2021.145381", overwrite = T) # scidirect
+scihub("10.1002/2016WR020175", overwrite = T)            # wiley
+
+scihub("10.3390/rs13071263")         # mpdi
+scihub("10.1007/s00704-019-02913-w") # springer
+scihub("10.1038/s41467-020-14688-0") # nature
 }
 }
