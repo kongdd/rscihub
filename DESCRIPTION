@@ -1,18 +1,12 @@
 Package: rscihub
 Type: Package
 Title: Paper writing tools
-Version: 0.1.1.9000
+Version: 0.1.2
 Authors@R: person("Dongdong", "Kong", email = "kongdd.sysu@gmail.com",
   role = c("aut", "cre"))
-Description: Download papers batchly using DOIs from many database. And some practical functions.
+Description: Download papers batchly using DOIs from many database.
 License: GPL-3
 LazyData: TRUE
-import: 
-    RoxygenNote
-Suggests: 
-    testthat (>= 2.1.0),
-    knitr,
-    rmarkdown
 Imports:
     httr,
     xml2,
@@ -21,11 +15,16 @@ Imports:
     magrittr,
     stringr,
     purrr,
+    readxl,
     lubridate,
     data.table,
     graphics,
     methods,
     plyr
+Suggests: 
+    testthat (>= 2.1.0),
+    knitr,
+    rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)

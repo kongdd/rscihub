@@ -4,7 +4,7 @@
 \alias{scihub}
 \title{download pdf by doi}
 \usage{
-scihub(doi, outdir = ".", overwrite = TRUE, ...)
+scihub(doi, outdir = ".", overwrite = FALSE, col = "DOI", return = FALSE, ...)
 }
 \arguments{
 \item{doi}{Character, Digital Object Identifier, like
@@ -32,6 +32,7 @@ supported:
 \item iopscience.iop.org
 \item journals.ametsoc.org
 \item www.hydrol-earth-syst-sci.net
+\item scihub.do
 }
 }
 \examples{

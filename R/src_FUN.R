@@ -6,21 +6,11 @@ src_URL <- function(url) url
 
 #' @title srcFUN
 #' @name srcFUN
-#'
+#' 
 #' @description
 #' *  `src_URL` simplest srcFUN, just treat the input url as download link.
 #' *  `src_wiley` wiley library. Journal like GRL, JGR, WRR, HP,
-#'  all in the database. Compared with other srcFUNs, this one is quite
-#'  complicated. It relies on previous web page identidy authentication. Hence,
-#'  it can't download simply by pdf urls, likes other database.
-#' *  `src_SciDirect.doi` access elsevier database trough doi.
-#' *  `src_SciDirect.url` access elsevier database trough url.
-#' *  `src_AMS` American Meteorological Society.
-#' *  `src_Springer` Springer.
-#' *  `src_SciReps` Scientific Reports.
-#' *  `src_IOP` IOPscience database.
-#' *  `src_hess` HESS.
-#' *  `src_SciReps` Scientific Reports.
+#'  all in the database. 
 #' 
 #' If just src returned, you need to download with [download_httr()]
 #' 
@@ -28,12 +18,20 @@ src_URL <- function(url) url
 #' "10.1175/JHM-D-15-0157.1", URLencoding format is also supported, i.e.
 #' "10.1175\%2FJHM-D-15-0157.1".
 #' Based on doi, `srcFUN` find corresponding paper and download it.
-#' @param DOIs Character vectors, multiple `doi`.
-#' @param outdir Output file directory
+#' @param outdir Output directory
 #' @param .download If true, it will will download pdf directly, and return
 #' pdf src. If false, only pdf src returned, without downlaoding pdf.
 #' @param ... other parameters pass to [httr::GET()]
 NULL
+
+#' @export
+url_scihub <- function(doi, scihub = "https://sci-hub.do") {
+    url <- sprintf("%s/%s", scihub, doi)
+    p <- GET(url) %>% content()
+    xml_find_first(p, "//div[@id='article']/iframe") %>%
+        xml_attr("src") %>%
+        gsub("^//", "https://", .)
+}
 
 #' @rdname srcFUN
 #' @export
@@ -77,9 +75,6 @@ url_nature <- function(doi) {
 
 #' @import glue
 #' @export
-url_wiley <- function(x, outfile = NULL, outdir = "./", ...) {
-    x %<>% check_doi(outdir)
-    src <- sprintf("https://agupubs.onlinelibrary.wiley.com/doi/pdfdirect/%s?download=true", x)
-    src
-    # write_webfile(src, outfile, outdir, ...)
+url_wiley <- function(doi) {
+    sprintf("https://agupubs.onlinelibrary.wiley.com/doi/pdfdirect/%s?download=true", doi)
 }

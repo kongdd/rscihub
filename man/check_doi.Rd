@@ -12,7 +12,7 @@ check_doi(doi, outdir)
 "10.1175\\%2FJHM-D-15-0157.1".
 Based on doi, \code{srcFUN} find corresponding paper and download it.}
 
-\item{outdir}{Output file directory}
+\item{outdir}{Output directory}
 }
 \value{
 URLdecode doi

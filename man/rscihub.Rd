@@ -7,7 +7,7 @@
 \alias{rscihub-package}
 \title{rscihub}
 \description{
-Download papers batchly using DOIs from many database. And some practical functions.
+Download papers batchly using DOIs from many database.
 }
 \author{
 \strong{Maintainer}: Dongdong Kong \email{kongdd.sysu@gmail.com}

@@ -7,8 +7,6 @@
 download_httr(DOIs, srcFUN = NULL, outdir = ".", ...)
 }
 \arguments{
-\item{DOIs}{Character vectors, multiple \code{doi}.}
-
 \item{srcFUN}{function used to generate pdf download links according to DOIs.
 If srcFUN is null, then this function will treat input parameter DOIs as download urls.}
 
@@ -22,10 +20,9 @@ Download using httr package by hadley
 \examples{
 # First, you need to get doi;
 # Second, you need to select the suitable srcFUN of corresponding database. If
-#   this package have not yet, you can consider to extend the srcFUN, or 
+#   this package have not yet, you can consider to extend the srcFUN, or
 #   contact me directly.
-
 \dontrun{
-download_httr("10.1175\%2FJHM-D-15-0157.1", outdir = '.', srcFUN = src_AMS)
+download_httr("10.1175\%2FJHM-D-15-0157.1", outdir = ".", srcFUN = src_AMS)
 }
 }

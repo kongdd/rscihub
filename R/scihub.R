@@ -17,33 +17,63 @@
 #' - iopscience.iop.org
 #' - journals.ametsoc.org
 #' - www.hydrol-earth-syst-sci.net
+#' - scihub.do
 #' 
 #' @example R/examples/ex-scihub.R
+#' @importFrom readxl read_xls
+#' @importFrom stringr str_replace_all
+#' @import future
 #' @export
-scihub <- function(doi, outdir = ".", overwrite = TRUE, ...) {
+scihub <- function(doi, outdir = ".", overwrite = FALSE, col = "DOI", return = FALSE, ...) {
+    if (grepl("*.xls$", doi[1])) doi = read_xls(doi[1])[[col]]
+    # plan(multisession)
+    sapply(doi, scihub_one, outdir = outdir, overwrite = overwrite, return = return, ...)
+    if (!return) invisible()
+}
+
+scihub_one <- function(doi, outdir = ".", overwrite = FALSE, return = FALSE, ...) {
+    if (is.na(doi)) return()
+    outfile = gsub("/", "-", doi) %>% paste0(outdir, "/", ., ".pdf")
+    if (file.exists(outfile) && !overwrite) return()
+    
     param <- parse_doi(doi)
     server <- param$server
 
-    if (server == "www.sciencedirect.com") {
-        url <- url_scidirect(param$content)
-    } else if (server == "agupubs.onlinelibrary.wiley.com") {
-        url <- url_wiley(doi)
-    } else if (server == "www.mdpi.com") {
-        url <- paste0(param$url, "/pdf")
-    } else if (server == "link.springer.com") {
-        url <- url_springer(doi)
-    } else if (server == "www.nature.com") {
-        url <- url_nature(doi)
-    } else if (server == "iopscience.iop.org") {
-        url <- url_IOP(doi)
-    } else if (server == "journals.ametsoc.org") {
-        url <- url_AMS(doi)
-    } else if (server == "www.hydrol-earth-syst-sci.net") {
-        url <- url_hess(doi)
-    } else {
-        stop(sprintf("not support: %s", server))
-    }
-    write_webfile(url, param$outfile, outdir, overwrite = overwrite, ...)
+    tryCatch({
+        if (server == "www.sciencedirect.com") {
+            url <- url_scidirect(param$content)
+        } else if (grepl("onlinelibrary.wiley.com", server)) {
+            url <- param$url %>% gsub("abs/", "pdfdirect/", .) %>% paste0("?download=true")
+        } else if (grepl("ieee.org", server)) {
+            url <- basename(param$url) %>% 
+                paste0("https://ieeexplore.ieee.org/stampPDF/getPDF.jsp?tp=&arnumber=", .)
+        } else if (server == "www.mdpi.com") {
+            url <- paste0(param$url, "/pdf")
+        } else if (server == "link.springer.com") {
+            url <- url_springer(doi)
+        } else if (server == "www.nature.com") {
+            url <- url_nature(doi)
+        } else if (server == "iopscience.iop.org") {
+            url <- url_IOP(doi)
+        } else if (server == "journals.ametsoc.org") {
+            url <- url_AMS(doi)
+        } else if (server == "www.hydrol-earth-syst-sci.net") {
+            url <- url_hess(doi)
+        } else if (server == "www.pnas.org") {
+            url <- param$url %>% paste0(".pdf") %>% 
+                str_replace_all(c("content" = "content/pnas")) 
+        } else {
+            url <- url_scihub(doi)
+        }
+        write_webfile(url, param$outfile, outdir, overwrite = overwrite, ...)
+        if (return) return(url)
+    }, error = function(e) {
+        message(sprintf('%s', e$message))
+        message(sprintf("[e] not support: %s, doi = %s\n", server, doi))
+        # second chance
+        url <- url_scihub(doi)
+        status = write_webfile(url, param$outfile, outdir, overwrite = overwrite, ...)        
+    })
 }
 
 ## 1. redirect by DOI: "//meta[@http-equiv='REFRESH']"
@@ -62,16 +92,22 @@ getRefreshUrl_DOI <- function(p){
 
 #' @export
 parse_doi <- function(doi) {
-    p <- POST("https://doi.org/",
-        encode = "form",
-        body = list(hdl = doi)
-    )
-    url <- getRefreshUrl_DOI(p)
-    if (!is.na(url)) p <- GET(url) 
-    
-    listk(doi, 
-        server = url_parse(p$url)$server,
-        url = p$url,
-        outfile = paste0(doi, ".pdf") %>% gsub("/", "-", .),
-        content = p %>% content(encoding = "UTF-8"))
+    tryCatch({
+        p <- POST("https://doi.org/",
+            encode = "form",
+            body = list(hdl = doi)
+        )
+        url <- getRefreshUrl_DOI(p)
+        if (!is.na(url)) p <- GET(url)
+
+        listk(doi,
+            server = url_parse(p$url)$server,
+            url = p$url,
+            outfile = paste0(doi, ".pdf") %>% gsub("/", "-", .),
+            content = p %>% content(encoding = "UTF-8")
+        )
+    }, error = function(e) {
+        message(sprintf('%s', e$message))
+        NULL
+    })
 }

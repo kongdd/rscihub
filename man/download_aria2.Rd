@@ -7,8 +7,6 @@
 download_aria2(DOIs, srcFUN = NULL, outdir = ".", n = 8, Rshell = FALSE, ...)
 }
 \arguments{
-\item{DOIs}{Character vectors, multiple \code{doi}.}
-
 \item{srcFUN}{function used to generate pdf download links according to DOIs.
 If srcFUN is null, then this function will treat input parameter DOIs as download urls.}
 
@@ -33,11 +31,10 @@ to support more.
 \examples{
 # First, you need to get doi;
 # Second, you need to select the suitable srcFUN of corresponding database. If
-#   this package have not yet, you can consider to extend the srcFUN, or 
+#   this package have not yet, you can consider to extend the srcFUN, or
 #   contact me directly.
-
 \dontrun{
-DOIs <- rep("10.1175\%2FJHM-D-15-0157.1", 4) #test aria2 parallel download
+DOIs <- rep("10.1175\%2FJHM-D-15-0157.1", 4) # test aria2 parallel download
 download_aria2(DOIs, outdir = "JHM", srcFUN = src_AMS, n = 4, Rshell = TRUE)
 }
 }

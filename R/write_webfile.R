@@ -19,9 +19,10 @@ write_webfile <- function(src, file = NULL, outdir = "./", overwrite = FALSE, ..
     tryCatch({
         GET(src, add_headers(`User-Agent` = header),
             write_disk(file, overwrite = TRUE), progress(), ...)
-        cat("\n") #offset the deficiency of progress (without newline at the end)
-    }, 
-    error = function(e) {
+        #offset the deficiency of progress (without newline at the end)
+        TRUE
+    }, error = function(e) {
         message(e$message)
+        FALSE
     })
 }

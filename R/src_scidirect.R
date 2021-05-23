@@ -29,7 +29,6 @@ url_scidirect <- function(x) {
         src <- with(param, glue::glue("{root}/{pii}{pdfExtension}?md5={md5}&pid={pid}"))
         # if (is.null(outfile)) outfile = param$pid
     }
-
     ## 2. redirect by ScienceDirect
     p <- GET(src)
     src <- getRefreshUrl_scidirect(p)

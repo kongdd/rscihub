@@ -32,9 +32,7 @@ Based on doi, \code{srcFUN} find corresponding paper and download it.}
 
 \item{urls}{pdf urls}
 
-\item{DOIs}{Character vectors, multiple \code{doi}.}
-
-\item{outdir}{Output file directory}
+\item{outdir}{Output directory}
 
 \item{.download}{If true, it will will download pdf directly, and return
 pdf src. If false, only pdf src returned, without downlaoding pdf.}
@@ -45,17 +43,7 @@ pdf src. If false, only pdf src returned, without downlaoding pdf.}
 \itemize{
 \item \code{src_URL} simplest srcFUN, just treat the input url as download link.
 \item \code{src_wiley} wiley library. Journal like GRL, JGR, WRR, HP,
-all in the database. Compared with other srcFUNs, this one is quite
-complicated. It relies on previous web page identidy authentication. Hence,
-it can't download simply by pdf urls, likes other database.
-\item \code{src_SciDirect.doi} access elsevier database trough doi.
-\item \code{src_SciDirect.url} access elsevier database trough url.
-\item \code{src_AMS} American Meteorological Society.
-\item \code{src_Springer} Springer.
-\item \code{src_SciReps} Scientific Reports.
-\item \code{src_IOP} IOPscience database.
-\item \code{src_hess} HESS.
-\item \code{src_SciReps} Scientific Reports.
+all in the database.
 }
 
 If just src returned, you need to download with \code{\link[=download_httr]{download_httr()}}
