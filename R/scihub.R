@@ -27,12 +27,15 @@
 scihub <- function(doi, outdir = ".", overwrite = FALSE, col = "DOI", return = FALSE, ...) {
     if (grepl("*.xls$", doi[1])) doi = read_xls(doi[1])[[col]]
     # plan(multisession)
-    sapply(doi, scihub_one, outdir = outdir, overwrite = overwrite, return = return, ...)
-    if (!return) invisible()
+    ans <- sapply(doi, scihub_one, outdir = outdir, overwrite = overwrite, return = return, ...)
+    if (return) ans else invisible() 
 }
+
+journal_miss <- c("10.1111")
 
 scihub_one <- function(doi, outdir = ".", overwrite = FALSE, return = FALSE, ...) {
     if (is.na(doi)) return()
+    doi %<>% URLencode(reserved = TRUE)
     outfile = gsub("/", "-", doi) %>% paste0(outdir, "/", ., ".pdf")
     if (file.exists(outfile) && !overwrite) return()
     
@@ -40,31 +43,38 @@ scihub_one <- function(doi, outdir = ".", overwrite = FALSE, return = FALSE, ...
     server <- param$server
 
     tryCatch({
-        if (server == "www.sciencedirect.com") {
-            url <- url_scidirect(param$content)
-        } else if (grepl("onlinelibrary.wiley.com", server)) {
-            url <- param$url %>% gsub("abs/", "pdfdirect/", .) %>% paste0("?download=true")
-        } else if (grepl("ieee.org", server)) {
-            url <- basename(param$url) %>% 
-                paste0("https://ieeexplore.ieee.org/stampPDF/getPDF.jsp?tp=&arnumber=", .)
-        } else if (server == "www.mdpi.com") {
-            url <- paste0(param$url, "/pdf")
-        } else if (server == "link.springer.com") {
-            url <- url_springer(doi)
-        } else if (server == "www.nature.com") {
-            url <- url_nature(doi)
-        } else if (server == "iopscience.iop.org") {
-            url <- url_IOP(doi)
-        } else if (server == "journals.ametsoc.org") {
-            url <- url_AMS(doi)
-        } else if (server == "www.hydrol-earth-syst-sci.net") {
-            url <- url_hess(doi)
-        } else if (server == "www.pnas.org") {
-            url <- param$url %>% paste0(".pdf") %>% 
-                str_replace_all(c("content" = "content/pnas")) 
+        if (dirname(doi) %!in% journal_miss) {
+            if (server == "www.sciencedirect.com") {
+                url <- url_scidirect(param$content)
+            } else if (grepl("onlinelibrary.wiley.com", server)) {
+                url <- param$url %>%
+                    gsub("abs/|full/", "pdfdirect/", .) %>%
+                    paste0("?download=true")
+            } else if (grepl("ieee.org", server)) {
+                url <- basename(param$url) %>%
+                    paste0("https://ieeexplore.ieee.org/stampPDF/getPDF.jsp?tp=&arnumber=", .)
+            } else if (server == "www.mdpi.com") {
+                url <- paste0(param$url, "/pdf")
+            } else if (server == "link.springer.com") {
+                url <- url_springer(doi)
+            } else if (server == "www.nature.com") {
+                url <- url_nature(doi)
+            } else if (server == "iopscience.iop.org") {
+                url <- url_IOP(doi)
+            } else if (server == "journals.ametsoc.org") {
+                url <- param$url %>% gsub(".xml$", ".pdf", .)
+                # url <- url_AMS(doi)
+            } else if (server == "www.hydrol-earth-syst-sci.net") {
+                url <- url_hess(doi)
+            } else if (server == "www.pnas.org") {
+                url <- param$url %>%
+                    paste0(".pdf") %>%
+                    str_replace_all(c("content" = "content/pnas"))
+            } else url <- url_scihub(doi)
         } else {
             url <- url_scihub(doi)
         }
+
         write_webfile(url, param$outfile, outdir, overwrite = overwrite, ...)
         if (return) return(url)
     }, error = function(e) {

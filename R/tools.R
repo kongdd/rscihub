@@ -73,3 +73,5 @@ listk <- function (...)
     x <- setNames(list(...), vars)
     return(x)
 }
+
+`%!in%` <- function(x, y) !(`%in%`(x, y))
