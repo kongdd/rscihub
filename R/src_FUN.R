@@ -39,7 +39,6 @@ url_AMS <- function(doi) {
     paste0("http://journals.ametsoc.org/doi/pdf/", doi)
 }
 
-
 #' @rdname srcFUN
 #' @export
 url_IOP <- function(doi) {
@@ -48,7 +47,7 @@ url_IOP <- function(doi) {
 
 #' @rdname srcFUN
 #' @export
-url_hess <- function(doi) {
+url_copernicus <- function(doi) {
     # doi %<>% {strsplit(., "/")[[1]][2]}
     doi <- strsplit(doi, "/") %>% laply(function(x) x[2])
     # replaceString <- strsplit(doi[1], "/")[[1]][1]
@@ -58,6 +57,7 @@ url_hess <- function(doi) {
         gsub("hess-", "", doi) %>% gsub("-", "/", .), "/",
         doi, ".pdf"
     )
+    # https://hess.copernicus.org/articles/25/2705/2021/hess-25-2705-2021.pdf
 }
 
 #' @rdname srcFUN

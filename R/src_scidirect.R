@@ -33,7 +33,7 @@ url_scidirect <- function(x) {
     p <- GET(src)
     src <- getRefreshUrl_scidirect(p)
     src
-    # write_webfile(src, outfile, outdir, ...)
+    # write_file(src, outfile, outdir, ...)
 }
 
 # #' @rdname srcFUN

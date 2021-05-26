@@ -53,6 +53,9 @@ scihub_one <- function(doi, outdir = ".", overwrite = FALSE, return = FALSE, ...
             } else if (grepl("ieee.org", server)) {
                 url <- basename(param$url) %>%
                     paste0("https://ieeexplore.ieee.org/stampPDF/getPDF.jsp?tp=&arnumber=", .)
+            } else if (grepl("copernicus.org", server)) {
+                url <- param$content %>% 
+                    xml_find_all("//a[@class='triangle'][@data-toggle]") %>% xml_attr("href")
             } else if (server == "www.mdpi.com") {
                 url <- paste0(param$url, "/pdf")
             } else if (server == "link.springer.com") {
@@ -64,8 +67,6 @@ scihub_one <- function(doi, outdir = ".", overwrite = FALSE, return = FALSE, ...
             } else if (server == "journals.ametsoc.org") {
                 url <- param$url %>% gsub(".xml$", ".pdf", .)
                 # url <- url_AMS(doi)
-            } else if (server == "www.hydrol-earth-syst-sci.net") {
-                url <- url_hess(doi)
             } else if (server == "www.pnas.org") {
                 url <- param$url %>%
                     paste0(".pdf") %>%
@@ -75,14 +76,14 @@ scihub_one <- function(doi, outdir = ".", overwrite = FALSE, return = FALSE, ...
             url <- url_scihub(doi)
         }
 
-        write_webfile(url, param$outfile, outdir, overwrite = overwrite, ...)
+        write_file(url, param$outfile, outdir, overwrite = overwrite, ...)
         if (return) return(url)
     }, error = function(e) {
         message(sprintf('%s', e$message))
         message(sprintf("[e] not support: %s, doi = %s\n", server, doi))
         # second chance
         url <- url_scihub(doi)
-        status = write_webfile(url, param$outfile, outdir, overwrite = overwrite, ...)        
+        status = write_file(url, param$outfile, outdir, overwrite = overwrite, ...)        
     })
 }
 
@@ -105,7 +106,7 @@ parse_doi <- function(doi) {
     tryCatch({
         p <- POST("https://doi.org/",
             encode = "form",
-            body = list(hdl = doi)
+            body = list(hdl = URLdecode(doi))
         )
         url <- getRefreshUrl_DOI(p)
         if (!is.na(url)) p <- GET(url)

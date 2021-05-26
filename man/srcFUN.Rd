@@ -5,7 +5,7 @@
 \alias{srcFUN}
 \alias{url_AMS}
 \alias{url_IOP}
-\alias{url_hess}
+\alias{url_copernicus}
 \alias{url_springer}
 \alias{url_nature}
 \title{srcFUN}
@@ -16,7 +16,7 @@ url_AMS(doi)
 
 url_IOP(doi)
 
-url_hess(doi)
+url_copernicus(doi)
 
 url_springer(doi)
 

@@ -23,6 +23,6 @@ download_httr <- function(DOIs, srcFUN = NULL, outdir = ".", ...) {
     for (i in seq_along(DOIs)) {
         cat(sprintf("[%d]: downloading %s\n", i, DOIs[i]))
         src <- srcFUN(DOIs[i], ...)
-        write_webfile(src, outdir = paste0(outdir, "/"))
+        write_file(src, outdir = paste0(outdir, "/"))
     }
 }
